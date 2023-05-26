@@ -18,9 +18,17 @@ let package = Package(
         ),
     ],
     targets: [
-        .executableTarget(name: "ApiariumConnect", dependencies: [
-            .product(name: "Vapor", package: "vapor")
-        ]),
-        .testTarget(name: "ApiariumConnectTests", dependencies: ["ApiariumConnect"]),
+        .executableTarget(
+            name: "ApiariumConnect",
+            dependencies: [
+                .product(name: "Vapor", package: "vapor")
+            ],
+            path: "Sources"
+        ),
+        .testTarget(
+            name: "ApiariumConnectTests",
+            dependencies: ["ApiariumConnect"],
+            path: "Tests"
+        ),
     ]
 )
