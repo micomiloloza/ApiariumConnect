@@ -1,4 +1,10 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
+import Vapor
 
-print("Hello, world!")
+
+var env = try Environment.detect()
+try LoggingSystem.bootstrap(from: &env)
+let app = Application(env)
+
+defer { app.shutdown() }
+app.get { req in "Hello World!" }
+try app.run()
