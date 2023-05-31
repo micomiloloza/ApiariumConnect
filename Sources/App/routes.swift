@@ -3,24 +3,30 @@ import Vapor
 import SwiftHtml
 
 
+struct TestTemplate: TemplateRepresentable {
+    var title: String
+    
+    func render(_ req: Request) -> Tag {
+        Html {
+            Head {
+                Title(title)
+            }
+            
+            Body {
+                H1(title)
+            }
+        }
+    }
+}
+
 func routes(_ app: Application) throws {
     app.get { req async in
         "It works!"
     }
     
     app.routes.get("hello") { req -> Response in
-        let document = Document(.html) {
-            Head {
-                Title("ApiariumConnect")
-            }
-            
-            Body {
-                H1("Welcome to beekeepers database.")
-            }
-        }
-        
-        let body = DocumentRenderer(minify: false, indent: 4).render(document)
-        
-        return Response(status: .ok, headers: ["Content-Type": "text/html; charset=utf-8"], body: .init(string: body))
+        req.templates.renderHtml(
+            TestTemplate(title: "Testing TemplateRepresentable protocol")
+        )
     }
 }
