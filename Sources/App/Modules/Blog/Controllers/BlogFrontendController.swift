@@ -21,4 +21,15 @@ struct BlogFrontendController {
             )
         }.sorted(by: { $0.date > $1.date })
     }()
+    
+    
+    func blogView(_ req: Request) throws -> Response {
+        let context = BlogPostsContext(icon: "📰", title: "Blog",
+                                       message: "News and stories about the world of bees and their keepers",
+                                       posts: posts)
+        
+        return req.templates.renderHtml(
+            BlogPostsTemplate(context)
+        )
+    }
 }

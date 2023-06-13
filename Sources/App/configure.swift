@@ -18,7 +18,12 @@ public func configure(_ app: Application) async throws {
     ), as: .psql)
 
     // register routes
-    let webRouter = WebRouter()
+    let routers: [RouteCollection] = [
+        WebRouter(),
+        BlogRouter()
+    ]
     
-    try webRouter.boot(routes: app.routes)
+    for router in routers {
+        try router.boot(routes: app.routes)
+    }
 }
