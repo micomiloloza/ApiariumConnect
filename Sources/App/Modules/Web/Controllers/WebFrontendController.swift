@@ -10,8 +10,18 @@ import Vapor
 
 struct WebFrontendController {
     func homeView(_ req: Request) throws -> Response {
-        req.templates.renderHtml(
-            WebHomeTemplate(.init(title: "ApiariumConnect", message: "Welcome beekeepers"))
+        let context = WebHomeContext(icon: "🐝",
+                                     title: "Welcome beekeper",
+                                     message: "To the world of bees",
+                                     paragraphs: [
+                                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                                        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                                     ],
+                                     link: .init(label: "Read the blog", url: "/blog/")
+        )
+        
+        return req.templates.renderHtml(
+            WebHomeTemplate(context)
         )
     }
 }
