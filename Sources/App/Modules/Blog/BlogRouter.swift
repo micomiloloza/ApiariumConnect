@@ -13,5 +13,6 @@ struct BlogRouter: RouteCollection {
         let controller = BlogFrontendController()
         
         routes.on(.GET, "blog", use: controller.blogView)
+        routes.on(.GET, .anything, use: controller.postView)
     }
 }
