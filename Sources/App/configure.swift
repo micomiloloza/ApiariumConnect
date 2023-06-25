@@ -20,12 +20,12 @@ public func configure(_ app: Application) async throws {
      app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
     //MARK: - register routes
-    let routers: [RouteCollection] = [
-        WebRouter(),
-        BlogRouter()
+    let modules: [ModuleInterface] = [
+        WebModule(),
+        BlogModule()
     ]
     
-    for router in routers {
-        try router.boot(routes: app.routes)
+    for module in modules {
+        try module.boot(app)
     }
 }
