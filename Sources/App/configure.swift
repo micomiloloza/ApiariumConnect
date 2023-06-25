@@ -5,8 +5,6 @@ import Vapor
 
 // configures your application
 public func configure(_ app: Application) async throws {
-    // serve files from /Public folder
-     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
     app.databases.use(.postgres(configuration: SQLPostgresConfiguration(
         hostname: Environment.get("DATABASE_HOST") ?? "localhost",
@@ -16,8 +14,12 @@ public func configure(_ app: Application) async throws {
         database: Environment.get("DATABASE_NAME") ?? "vapor_database",
         tls: .prefer(try .init(configuration: .clientDefault)))
     ), as: .psql)
+    
+    // MARK: - Middlewares
+    // serve files from /Public folder
+     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
-    // register routes
+    //MARK: - register routes
     let routers: [RouteCollection] = [
         WebRouter(),
         BlogRouter()
