@@ -18,9 +18,16 @@ public func configure(_ app: Application) async throws {
         tls: connectionConfig
     ), sqlLogLevel: .debug), as: .psql)
     
+    
+    // MARK: - Sessions
+    app.sessions.use(.fluent)
+    app.migrations.add(SessionRecord.migration)
+    
+    
     // MARK: - Middlewares
     // serve files from /Public folder
-     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    app.middleware.use(app.sessions.middleware)
 
     //MARK: - register routes
     let modules: [ModuleInterface] = [
