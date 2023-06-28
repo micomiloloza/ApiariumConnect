@@ -6,24 +6,27 @@
 //
 
 import Vapor
+import Fluent
 
 
 struct BlogFrontendController {
-    var posts: [BlogPost] = {
-        stride(from: 1, to: 3, by: 1).map { index in
-            return BlogPost(title: "Sample post \(index)",
-                            slug: "sample-post-\(index)",
-                            image: "/img/posts/\(String(format: "%02d", index)).jpg",
-                            excerpt: "Lorem ipsum",
-                            date: Date().addingTimeInterval(-Double.random(in: 0...(86400 * 60))),
-                            category: Bool.random() ? "Sample category" : nil,
-                            content: "Lorem ipsum dolor sit amet."
+    func blogView(_ req: Request) async throws -> Response {
+        let postModels = try await BlogPostModel
+            .query(on: req.db)
+            .sort(\.$date, .descending)
+            .all()
+        
+        let posts = try postModels.map { postModel in
+            return try Blog.Post.List(
+                id: postModel.requireID(),
+                title: postModel.title,
+                slug: postModel.slug,
+                image: postModel.imageKey,
+                excerpt: postModel.excerpt,
+                date: postModel.date
             )
-        }.sorted(by: { $0.date > $1.date })
-    }()
-    
-    
-    func blogView(_ req: Request) throws -> Response {
+        }
+        
         let context = BlogPostsContext(icon: "📰", title: "Blog",
                                        message: "News and stories about the world of bees and their keepers",
                                        posts: posts)
@@ -33,11 +36,27 @@ struct BlogFrontendController {
         )
     }
     
-    func postView(_ req: Request) throws -> Response {
+    func postView(_ req: Request) async throws -> Response {
         let slug = req.url.path.trimmingCharacters(in: .init(charactersIn: "/"))
-        guard let post = posts.first(where: { $0.slug == slug }) else {
+        
+        guard let postModel = try await BlogPostModel
+            .query(on: req.db)
+            .filter(\.$slug == slug)
+            .with(\.$category)
+            .first() else {
             return req.redirect(to: "/")
         }
+        
+        let post = try Blog.Post.Detail(
+            id: postModel.requireID(),
+            title: postModel.title,
+            slug: postModel.slug,
+            image: postModel.imageKey,
+            excerpt: postModel.excerpt,
+            date: postModel.date,
+            category: .init(id: postModel.category.requireID(),
+                            title: postModel.category.title),
+            content: postModel.content)
         
         let context = BlogPostContext(post: post)
         

@@ -6,14 +6,17 @@ import Vapor
 // configures your application
 public func configure(_ app: Application) async throws {
 
+    
+    let sslContext = try NIOSSLContext(configuration: .clientDefault)
+    let connectionConfig = PostgresConnection.Configuration.TLS.prefer(sslContext)
     app.databases.use(.postgres(configuration: SQLPostgresConfiguration(
         hostname: Environment.get("DATABASE_HOST") ?? "localhost",
-        port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? SQLPostgresConfiguration.ianaPortNumber,
-        username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
-        password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
-        database: Environment.get("DATABASE_NAME") ?? "vapor_database",
-        tls: .prefer(try .init(configuration: .clientDefault)))
-    ), as: .psql)
+        port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? 5435,//SQLPostgresConfiguration.ianaPortNumber,
+        username: Environment.get("DATABASE_USERNAME") ?? "apiarium_username",
+        password: Environment.get("DATABASE_PASSWORD") ?? "apiarium_password",
+        database: Environment.get("DATABASE_NAME") ?? "apiarium_database",
+        tls: connectionConfig
+    ), sqlLogLevel: .debug), as: .psql)
     
     // MARK: - Middlewares
     // serve files from /Public folder
@@ -28,4 +31,6 @@ public func configure(_ app: Application) async throws {
     for module in modules {
         try module.boot(app)
     }
+    
+    try await app.autoMigrate()
 }

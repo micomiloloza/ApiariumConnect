@@ -9,12 +9,17 @@ import Fluent
 import Vapor
 
 
-final class BlogCategoryModel: Model {
-    static let schema = "blog_categories"
+final class BlogCategoryModel: DatabaseModelInterface {
+    typealias Module = BlogModule
     
-    @ID() var id: UUID?
-    @Field(key: FieldKeys.v1.title) var title: String
-    @Children(for: \.$category) var posts: [BlogPostModel]
+    static var identifier = "categories"
+    
+    @ID()
+    var id: UUID?
+    @Field(key: FieldKeys.v1.title)
+    var title: String
+    @Children(for: \.$category)
+    var posts: [BlogPostModel]
     
     public init() { }
     
