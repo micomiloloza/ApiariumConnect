@@ -25,6 +25,7 @@ public func configure(_ app: Application) async throws {
     //MARK: - register routes
     let modules: [ModuleInterface] = [
         WebModule(),
+        UserModule(),
         BlogModule()
     ]
     
