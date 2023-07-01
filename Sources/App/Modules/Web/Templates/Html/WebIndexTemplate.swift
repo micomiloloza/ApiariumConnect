@@ -59,10 +59,26 @@ public struct WebIndexTemplate: TemplateRepresentable {
             }
             Body {
                 Header {
-                    NavigationTemplate(.init(items: [
-                        .init(title: "Home", href: "/", class: "selected"),
-                        .init(title: "Blog", href: "/blog/", class: "selected")
-                    ])).render(req)
+                    if req.auth.has(AuthenticatedUser.self) {
+                        let navigationItemContexts: [NavigationItemContext] = [
+                            .init(title: "Home", href: "/", class: "selected"),
+                            .init(title: "Blog", href: "/blog/", class: "selected"),
+                            .init(title: "About", href: "#", class: "selected", onClick: "javascript:about();"),
+                            .init(title: "Sign out", href: "/sign-out/", class: "selected")
+                        ]
+                        
+                        NavigationTemplate(.init(items: navigationItemContexts)).render(req)
+                    }
+                    else {
+                        let navigationItemContexts: [NavigationItemContext] = [
+                            .init(title: "Home", href: "/", class: "selected"),
+                            .init(title: "Blog", href: "/blog/", class: "selected"),
+                            .init(title: "About", href: "#", class: "selected", onClick: "javascript:about();"),
+                            .init(title: "Sign in", href: "/sign-in/", class: "selected")
+                        ]
+                        
+                        NavigationTemplate(.init(items: navigationItemContexts)).render(req)
+                    }
                 }
                 
                 Main {

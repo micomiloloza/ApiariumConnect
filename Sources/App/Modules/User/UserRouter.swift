@@ -13,6 +13,10 @@ struct UserRouter: RouteCollection {
     
     func boot(routes: RoutesBuilder) throws {
         routes.on(.GET, "sign-in", use: controller.signInView)
-        routes.on(.POST, "sign-in", use: controller.signInAction)
+        routes
+            .grouped(UserCredentialsAuthenticator())
+            .on(.POST, "sign-in", use: controller.signInAction)
+        
+        routes.on(.GET, "sign-out", use: controller.signOutAction)
     }
 }

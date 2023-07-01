@@ -40,10 +40,6 @@ public struct NavigationTemplate: TemplateRepresentable {
                     for itemContext in context.items {
                         NavigationItemTemplate(itemContext).render(req)
                     }
-                    
-                    A("About")
-                        .href("#")
-                        .onClick("javascript:about();")
                 }
                 .class("menu-items")
             }
