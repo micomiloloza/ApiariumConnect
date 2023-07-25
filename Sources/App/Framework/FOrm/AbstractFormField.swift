@@ -1,0 +1,101 @@
+//
+//  AbstractFormField.swift
+//  
+//
+//  Created by Mico Miloloza on 08.07.2023..
+//
+
+import Vapor
+
+/**
+ FormFieldComponent events suggested order of execution:
+ - When displaying the form:
+     - load
+     - read
+     - render
+ - When handling a submission event:
+     - load
+     - process
+     - validate
+     - render if invalid
+     - write
+     - save
+ */
+open class AbstractFormField<Input: Decodable, Output: TemplateRepresentable>: FormComponent {
+    var key: String
+    var input: Input
+    var output: Output
+    var error: String?
+    
+    public typealias FormFieldBlock = (Request, AbstractFormField<Input, Output>) async throws -> Void
+    
+    private var readBlock: FormFieldBlock?
+    private var writeBlock: FormFieldBlock?
+    private var loadBlock: FormFieldBlock?
+    private var saveBlock: FormFieldBlock?
+    
+    public init(key: String, input: Input, output: Output, error: String? = nil) {
+        self.key = key
+        self.input = input
+        self.output = output
+        self.error = error
+    }
+    
+    open func config(_ block: (AbstractFormField<Input, Output>) -> Void) -> Self {
+        block(self)
+        
+        return self
+    }
+    
+    // MARK: - Block setters
+    open func readBlock(_ block: @escaping FormFieldBlock) -> Self {
+        readBlock = block
+        return self
+    }
+    
+    open func writeBlock(_ block: @escaping FormFieldBlock) -> Self {
+        writeBlock = block
+        return self
+    }
+    
+    open func loadBlock(_ block: @escaping FormFieldBlock) -> Self {
+        loadBlock = block
+        return self
+    }
+    
+    open func saveBlock(_ block: @escaping FormFieldBlock) -> Self {
+        saveBlock = block
+        return self
+    }
+    
+    open func process(req: Request) async throws {
+        if let value = try? req.content.get(Input.self, at: key) {
+            input = value
+        }
+    }
+    
+    // MARK: - FormComponent protocol
+    open func validate(req: Request) async throws -> Bool {
+        return true
+    }
+    
+    open func read(req: Request) async throws {
+        try await readBlock?(req, self)
+    }
+    
+    open func write(req: Request) async throws {
+        try await writeBlock?(req, self)
+    }
+    
+    open func load(req: Request) async throws {
+        try await loadBlock?(req, self)
+    }
+    
+    open func save(req: Request) async throws {
+        try await saveBlock?(req, self)
+    }
+    
+    open func render(req: Request) -> TemplateRepresentable {
+        return output
+    }
+}

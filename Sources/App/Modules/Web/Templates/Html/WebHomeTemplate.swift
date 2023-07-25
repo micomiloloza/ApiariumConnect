@@ -10,7 +10,7 @@ import SwiftHtml
 
 
 public struct WebHomeTemplate: TemplateRepresentable {
-    let context: WebHomeContext
+    public var context: WebHomeContext
     
     public init(_ context: WebHomeContext) {
         self.context = context
