@@ -14,19 +14,19 @@ struct UserFrontendController {
         let password: String?
     }
     
-    func renderSignInView(_ req: Request, form: UserLoginForm) -> Response {
+    func renderSignInView(_ req: Request, _ form: UserLoginForm) -> Response {
         let context = UserLoginContext(
-            icon: "✍🏽",
+            icon: "🐝",
             title: "Sign in",
-            message: "Welcome beekeeper",
+            message: "Please login with your existing account",
             form: form.render(req: req)
         )
         
         return req.templates.renderHtml(UserLoginTemplate(context))
     }
     
-    func signInView(_ req: Request) throws -> Response {
-        renderSignInView(req, form: .init())
+    func signInView(_ req: Request) async throws -> Response {
+        renderSignInView(req, .init())
     }
     
     func signInAction(_ req: Request) async throws -> Response {
@@ -36,12 +36,16 @@ struct UserFrontendController {
             return req.redirect(to: "/")
         }
         
-        var form = UserLoginForm()
+        let form = UserLoginForm()
         
         try await form.process(req: req)
-        form.error = "Invalid email or password"
+        let isValid = try await form.validate(req: req)
         
-        return renderSignInView(req, form: form)
+        if !isValid {
+            form.error = "Invalid email or password"
+        }
+        
+        return renderSignInView(req, form)
     }
     
     func signOutAction(_ req: Request) throws -> Response {

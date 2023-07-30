@@ -27,7 +27,7 @@ struct BlogFrontendController {
             )
         }
         
-        var context = BlogPostsContext(icon: "📰", title: "Blog",
+        let context = BlogPostsContext(icon: "📰", title: "Blog",
                                        message: "News and stories about the world of bees and their keepers",
                                        posts: posts)
         

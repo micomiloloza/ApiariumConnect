@@ -7,15 +7,16 @@
 
 import Vapor
 
-/**
- Please note that this function can throw, but we're only going to throw an error if a system
- error happened, such as a database failure or something similar. We always return user-
- related errors as a ValidationErrorDetail object or a nil value if everything was fine.
- */
+
 public protocol AsyncValidator {
     var key: String { get }
     var message: String { get }
     
+    /**
+     Please note that this function can throw, but we're only going to throw an error if a system
+     error happened, such as a database failure or something similar. We always return user-
+     related errors as a ValidationErrorDetail object or a nil value if everything was fine.
+     */
     func validate(_ req: Request) async throws -> ValidationErrorDetail?
 }
 

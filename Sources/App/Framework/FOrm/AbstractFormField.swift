@@ -28,11 +28,13 @@ open class AbstractFormField<Input: Decodable, Output: TemplateRepresentable>: F
     var error: String?
     
     public typealias FormFieldBlock = (Request, AbstractFormField<Input, Output>) async throws -> Void
+    public typealias FormFieldValidatorsBlock = (Request, AbstractFormField<Input, Output>) -> [AsyncValidator]
     
     private var readBlock: FormFieldBlock?
     private var writeBlock: FormFieldBlock?
     private var loadBlock: FormFieldBlock?
     private var saveBlock: FormFieldBlock?
+    private var validatorsBlock: FormFieldValidatorsBlock?
     
     public init(key: String, input: Input, output: Output, error: String? = nil) {
         self.key = key
@@ -68,6 +70,11 @@ open class AbstractFormField<Input: Decodable, Output: TemplateRepresentable>: F
         return self
     }
     
+    open func validators(@AsyncValidatorBuilder _ block: @escaping FormFieldValidatorsBlock) -> Self {
+        validatorsBlock = block
+        return self
+    }
+    
     open func process(req: Request) async throws {
         if let value = try? req.content.get(Input.self, at: key) {
             input = value
@@ -76,7 +83,9 @@ open class AbstractFormField<Input: Decodable, Output: TemplateRepresentable>: F
     
     // MARK: - FormComponent protocol
     open func validate(req: Request) async throws -> Bool {
-        return true
+        guard let validators = validatorsBlock else { return true }
+        
+        return await RequestValidator(validators(req, self)).isValid(req)
     }
     
     open func read(req: Request) async throws {
