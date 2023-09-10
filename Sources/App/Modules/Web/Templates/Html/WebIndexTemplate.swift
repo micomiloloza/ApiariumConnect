@@ -10,25 +10,6 @@ import SwiftHtml
 import SwiftSvg
 
 
-extension Svg {
-    static func menuIcon() -> Svg {
-        Svg {
-            Line(x1: 3, y1: 12, x2: 21, y2: 12)
-            Line(x1: 3, y1: 6, x2: 21, y2: 6)
-            Line(x1: 3, y1: 18, x2: 21, y2: 18)
-        }
-        .width(24)
-        .height(24)
-        .viewBox(minX: 0, minY: 0, width: 24, height: 24)
-        .fill("none")
-        .stroke("currentColor")
-        .strokeWidth(2)
-        .strokeLinecap("round")
-        .strokeLinejoin("round")
-    }
-}
-
-
 public struct WebIndexTemplate: TemplateRepresentable {
     public var context: WebIndexContext
     var body: Tag
@@ -64,6 +45,7 @@ public struct WebIndexTemplate: TemplateRepresentable {
                             .init(title: "Home", href: "/", class: "selected"),
                             .init(title: "Blog", href: "/blog/", class: "selected"),
                             .init(title: "About", href: "#", class: "selected", onClick: "javascript:about();"),
+                            .init(title: "Admin", href: "/admin/", class: "selected"),
                             .init(title: "Sign out", href: "/sign-out/", class: "selected")
                         ]
                         

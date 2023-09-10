@@ -44,6 +44,7 @@ public func configure(_ app: Application) async throws {
     let modules: [ModuleInterface] = [
         WebModule(),
         UserModule(),
+        AdminModule(),
         BlogModule()
     ]
     
