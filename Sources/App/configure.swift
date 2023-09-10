@@ -2,10 +2,21 @@ import NIOSSL
 import Fluent
 import FluentPostgresDriver
 import Vapor
+import Liquid
+import LiquidLocalDriver
+
 
 // configures your application
 public func configure(_ app: Application) async throws {
-
+    app.fileStorages.use(
+        .local(
+            publicUrl: "http://localhost:8080",
+            publicPath: app.directory.publicDirectory,
+            workDirectory: "assets"
+        ),
+        as: .local
+    )
+    app.routes.defaultMaxBodySize = "10mb"
     
     let sslContext = try NIOSSLContext(configuration: .clientDefault)
     let connectionConfig = PostgresConnection.Configuration.TLS.prefer(sslContext)
