@@ -20,6 +20,20 @@ public struct AdminDashboardTemplate: TemplateRepresentable {
                     H1(context.title)
                     P(context.message)
                 }
+                
+                Nav {
+                    H2("Blog")
+                    Ul {
+                        Li {
+                            A("Posts")
+                                .href("/admin/blog/posts/")
+                        }
+                    }
+                }
+                
+//                let navigationItemContexts: [NavigationItemContext] = [
+//                    .init(title: "Blog posts", href: <#T##String#>, class: <#T##String#>)
+//                ]
             }
             .id("dashboard")
             .id("container")

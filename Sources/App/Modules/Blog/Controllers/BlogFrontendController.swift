@@ -11,21 +11,14 @@ import Fluent
 
 struct BlogFrontendController {
     func blogView(_ req: Request) async throws -> Response {
+        let api = BlogPostApiController()
+        
         let postModels = try await BlogPostModel
             .query(on: req.db)
             .sort(\.$date, .descending)
             .all()
         
-        let posts = try postModels.map { postModel in
-            return try Blog.Post.List(
-                id: postModel.requireID(),
-                title: postModel.title,
-                slug: postModel.slug,
-                image: postModel.imageKey,
-                excerpt: postModel.excerpt,
-                date: postModel.date
-            )
-        }
+        let posts = postModels.map { api.mapList($0) }
         
         let context = BlogPostsContext(icon: "📰", title: "Blog",
                                        message: "News and stories about the world of bees and their keepers",
@@ -47,16 +40,8 @@ struct BlogFrontendController {
             return req.redirect(to: "/")
         }
         
-        let post = try Blog.Post.Detail(
-            id: postModel.requireID(),
-            title: postModel.title,
-            slug: postModel.slug,
-            image: postModel.imageKey,
-            excerpt: postModel.excerpt,
-            date: postModel.date,
-            category: .init(id: postModel.category.requireID(),
-                            title: postModel.category.title),
-            content: postModel.content)
+        let api = BlogPostApiController()
+        let post = api.mapDetail(postModel)
         
         let context = BlogPostContext(post: post)
         
