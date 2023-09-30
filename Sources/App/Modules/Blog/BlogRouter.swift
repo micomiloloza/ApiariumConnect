@@ -22,5 +22,8 @@ struct BlogRouter: RouteCollection {
         posts.on(.GET, use: adminController.listView)
         
         posts.on(.GET, ":postId", use: adminController.detailView)
+        
+        posts.on(.GET, "create", use: adminController.createView)
+        posts.on(.POST, "create", use: adminController.createAction)
     }
 }

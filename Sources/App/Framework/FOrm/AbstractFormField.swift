@@ -50,22 +50,22 @@ open class AbstractFormField<Input: Decodable, Output: TemplateRepresentable>: F
     }
     
     // MARK: - Block setters
-    open func readBlock(_ block: @escaping FormFieldBlock) -> Self {
+    open func read(_ block: @escaping FormFieldBlock) -> Self {
         readBlock = block
         return self
     }
     
-    open func writeBlock(_ block: @escaping FormFieldBlock) -> Self {
+    open func write(_ block: @escaping FormFieldBlock) -> Self {
         writeBlock = block
         return self
     }
     
-    open func loadBlock(_ block: @escaping FormFieldBlock) -> Self {
+    open func load(_ block: @escaping FormFieldBlock) -> Self {
         loadBlock = block
         return self
     }
     
-    open func saveBlock(_ block: @escaping FormFieldBlock) -> Self {
+    open func save(_ block: @escaping FormFieldBlock) -> Self {
         saveBlock = block
         return self
     }
