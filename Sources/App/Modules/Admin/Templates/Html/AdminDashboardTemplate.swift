@@ -10,7 +10,11 @@ import SwiftHtml
 
 
 public struct AdminDashboardTemplate: TemplateRepresentable {
-    let context: AdminDashboardContext
+    var context: AdminDashboardContext
+    
+    init(_ context: AdminDashboardContext) {
+        self.context = context
+    }
     
     public func render(_ req: Request) -> Tag {
         AdminIndexTemplate(.init(title: context.title)) {
@@ -28,12 +32,12 @@ public struct AdminDashboardTemplate: TemplateRepresentable {
                             A("Posts")
                                 .href("/admin/blog/posts/")
                         }
+                        Li {
+                            A("Categories")
+                                .href("/admin/blog/categories/")
+                        }
                     }
                 }
-                
-//                let navigationItemContexts: [NavigationItemContext] = [
-//                    .init(title: "Blog posts", href: <#T##String#>, class: <#T##String#>)
-//                ]
             }
             .id("dashboard")
             .id("container")

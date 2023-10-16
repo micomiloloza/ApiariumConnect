@@ -11,7 +11,7 @@ import Vapor
 public struct AdminFrontendController {
     func dashboardView(_ req: Request) throws -> Response {
         let user = try req.auth.require(AuthenticatedUser.self)
-        let template = AdminDashboardTemplate(context: .init(
+        let template = AdminDashboardTemplate(.init(
             icon: "⚙️",
             title: "Dashboard",
             message: "Welcome \(user.username)")

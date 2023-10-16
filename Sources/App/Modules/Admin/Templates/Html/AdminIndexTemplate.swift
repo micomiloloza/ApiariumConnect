@@ -66,6 +66,19 @@ public struct AdminIndexTemplate: TemplateRepresentable {
                     .id("secondary-menu")
                 }
                 .id("navigation")
+                
+                Div {
+                    Nav {
+                        A("Admin")
+                            .href("/admin/")
+                        
+                        for breadcrumb in context.breadcrumbs {
+                            LinkTemplate(breadcrumb).render(req)
+                        }
+                    }
+                }
+                .class("breadcrumb")
+                
                 Main {
                     body
                 }

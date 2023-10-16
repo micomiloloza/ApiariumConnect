@@ -10,8 +10,10 @@ import Foundation
 
 public struct AdminIndexContext {
     let title: String
+    let breadcrumbs: [LinkContext]
     
-    public init(title: String) {
+    public init(title: String, breadcrumbs: [LinkContext] = []) {
         self.title = title
+        self.breadcrumbs = breadcrumbs
     }
 }
