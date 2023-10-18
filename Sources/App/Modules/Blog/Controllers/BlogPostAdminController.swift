@@ -9,14 +9,15 @@ import Vapor
 import Fluent
 
 
-struct BlogPostAdminController: AdminListController {
+struct BlogPostAdminController: AdminListController, AdminDetailController {
+    
     var modelName: Name = .init(singular: "post")
     
     var parameterId: String = "postId"
     
     typealias DatabaseModel = BlogPostModel
     
-    
+    // MARK: - ListController
     func listColumns() -> [ColumnContext] {
         [
             .init(key: "image"),
@@ -28,6 +29,14 @@ struct BlogPostAdminController: AdminListController {
         [
             .init(value: model.imageKey, type: .image),
             .init(value: model.title, link: .init(label: model.title))
+        ]
+    }
+    
+    // MARK: - DetailController
+    func detailFields(for model: BlogPostModel) -> [DetailContext] {
+        [
+            .init("image", model.imageKey, type: .image),
+            .init("title", model.title)
         ]
     }
     
@@ -70,15 +79,15 @@ struct BlogPostAdminController: AdminListController {
 //    }
     
     // MARK: - Details
-    func detailView(_ req: Request) async throws -> Response {
-        let api = BlogPostApiController()
-        let model = try await find(req)
-        let detail = api.mapDetail(model)
-        
-        let template = BlogPostAdminDetailTemplate(.init(title: detail.title, detail: detail))
-        
-        return req.templates.renderHtml(template)
-    }
+//    func detailView(_ req: Request) async throws -> Response {
+//        let api = BlogPostApiController()
+//        let model = try await find(req)
+//        let detail = api.mapDetail(model)
+//        
+//        let template = BlogPostAdminDetailTemplate(.init(title: detail.title, detail: detail))
+//        
+//        return req.templates.renderHtml(template)
+//    }
     
     // MARK: - Create
     /// Inside the controller, we should be able to use the form to create a new blog post.
